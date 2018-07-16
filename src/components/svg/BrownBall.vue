@@ -1,0 +1,76 @@
+<template>
+<svg
+  width="110px"
+  height="110px"
+  viewBox="0 0 110 110"
+  version="1.1">
+  <defs>
+    <linearGradient
+      x1="28.5779994%"
+      y1="42.5571671%"
+      x2="0%"
+      y2="22.2539062%"
+      id="brown-gradient">
+      <stop
+        stop-color="#8F6213"
+        offset="0%"/>
+      <stop
+        stop-color="#956F2E"
+        offset="72.5343208%"/>
+      <stop
+        stop-color="#EEEEEE"
+        offset="100%"/>
+    </linearGradient>
+    <circle
+      id="brownball"
+      cx="55"
+      cy="53"
+      r="50"/>
+    <filter
+      x="-8.5%"
+      y="-6.5%"
+      width="117.0%"
+      height="117.0%"
+      filterUnits="objectBoundingBox"
+      id="brown-filter">
+      <feOffset
+        dx="0"
+        dy="2"
+        in="SourceAlpha"
+        result="shadowOffsetOuterBrown"/>
+      <feGaussianBlur
+        stdDeviation="2.5"
+        in="shadowOffsetOuterBrown"
+        result="shadowBlurOuterBrown"/>
+      <feColorMatrix
+        values="0 0 0 0 0.717315051   0 0 0 0 0.386154036   0 0 0 0 0.386154036  0 0 0 0.5 0"
+        type="matrix"
+        in="shadowBlurOuterBrown"/>
+    </filter>
+  </defs>
+  <g
+    id="brownball"
+    stroke="none"
+    stroke-width="1"
+    fill="none"
+    fill-rule="evenodd">
+    <g id="brownball">
+      <use
+        fill="blak"
+        fill-opacity="1" 
+        filter="url(#brown-filter)"
+        xlink:href="#brownball"/>
+      <use
+        fill="url(#brown-gradient)"
+        fill-rule="evenodd"
+        xlink:href="#brownball"/>
+    </g>
+  </g>
+</svg>
+</template>
+
+<script>
+export default {
+  name: 'BrownBall',
+};
+</script>

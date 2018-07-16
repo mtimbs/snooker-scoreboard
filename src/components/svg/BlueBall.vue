@@ -1,0 +1,76 @@
+<template>
+<svg
+	width="110px"
+	height="110px"
+	viewBox="0 0 110 110"
+	version="1.1">
+	<defs>
+		<linearGradient
+			x1="28.5779994%"
+			y1="42.5571671%"
+			x2="0%"
+			y2="22.2539062%"
+			id="blue-gradient">
+			<stop
+				stop-color="#2C5293"
+				offset="0%"/>
+			<stop
+				stop-color="#2E6595"
+				offset="72.5343208%"/>
+			<stop
+				stop-color="#EEEEEE"
+				offset="100%"/>
+		</linearGradient>
+		<circle
+			id="blueball"
+			cx="55"
+			cy="53"
+			r="50"/>
+		<filter
+			x="-8.5%"
+			y="-6.5%"
+			width="117.0%"
+			height="117.0%"
+			filterUnits="objectBoundingBox"
+			id="blue-filter">
+			<feOffset
+				dx="0"
+				dy="2"
+				in="SourceAlpha"
+				result="shadowOffsetOuterBlue"/>
+			<feGaussianBlur
+				stdDeviation="2.5"
+				in="shadowOffsetOuterBlue"
+				result="shadowBlurOuterBlue"/>
+			<feColorMatrix
+				values="0 0 0 0 0.202227841   0 0 0 0 0.232022911   0 0 0 0 0.387675383  0 0 0 0.5 0"
+				type="matrix"
+				in="shadowBlurOuterBlue"/>
+		</filter>
+	</defs>
+	<g
+		id="blueball"
+		stroke="none"
+		stroke-width="1"
+		fill="none"
+		fill-rule="evenodd">
+		<g id="blueball">
+			<use
+				fill="black"
+				fill-opacity="1"
+				filter="url(#blue-filter)"
+				xlink:href="#blueball"/>
+			<use
+				fill="url(#blue-gradient)"
+				fill-rule="evenodd"
+				xlink:href="#blueball"/>
+		</g>
+	</g>
+</svg>
+</template>
+
+<script>
+export default {
+  name: 'BlueBall',
+};
+</script>

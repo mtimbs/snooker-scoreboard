@@ -1,0 +1,76 @@
+<template>
+<svg
+  width="110px"
+  height="110px"
+  viewBox="0 0 110 110"
+	version="1.1">
+	<defs>
+		<linearGradient
+			x1="31.2851562%"
+			y1="44.4804688%"
+			x2="0%"
+			y2="22.2539062%"
+			id="yellow-gradient">
+			<stop
+				stop-color="#F1DA2F"
+				offset="0%"/>
+			<stop
+				stop-color="#ECE3A0"
+				offset="67.230401%"/>
+			<stop
+				stop-color="#EEEEEE"
+				offset="100%"/>
+		</linearGradient>
+		<circle
+			id="yellowball"
+			cx="55"
+			cy="53"
+			r="50"/>
+		<filter
+			x="-8.5%"
+			y="-6.5%"
+			width="117.0%"
+			height="117.0%"
+			filterUnits="objectBoundingBox"
+			id="yellow-filter">
+			<feOffset
+				dx="0"
+				dy="2"
+				in="SourceAlpha"
+				result="shadowOffsetOuterYellow"/>
+			<feGaussianBlur
+				stdDeviation="2.5"
+				in="shadowOffsetOuterYellow"
+				result="shadowBlurOuterYellow"/>
+			<feColorMatrix
+				values="0 0 0 0 0.826211735   0 0 0 0 0.771660644   0 0 0 0 0.284564482  0 0 0 0.5 0"
+				type="matrix"
+				in="shadowBlurOuterYellow"/>
+		</filter>
+	</defs>
+	<g
+		id="yellowball"
+		stroke="none"
+		stroke-width="1"
+		fill="none"
+		fill-rule="evenodd">
+		<g id="yellowball">
+			<use
+				fill="black"
+				fill-opacity="1"
+				filter="url(#yellow-filter)"
+				xlink:href="#yellowball"/>
+			<use
+				fill="url(#yellow-gradient)"
+				fill-rule="evenodd"
+				xlink:href="#yellowball"/>
+		</g>
+	</g>
+</svg>
+</template>
+
+<script>
+export default {
+  name: 'YellowBall',
+};
+</script>

@@ -1,0 +1,76 @@
+<template>
+<svg
+  width="150px"
+  height="150px"
+  viewBox="0 0 110 110"
+  version="1.1">
+  <defs>
+    <linearGradient
+      x1="31.2851562%"
+      y1="44.4804688%"
+      x2="0%"
+      y2="22.2539062%"
+      id="red-gradient">
+      <stop
+        stop-color="#F12F2F"
+        offset="0%"/>
+      <stop
+        stop-color="#E35A5A"
+        offset="70.7663475%"/>
+      <stop
+        stop-color="#EEEEEE"
+        offset="100%"/>
+    </linearGradient>
+    <circle
+      id="redball"
+      cx="55"
+      cy="53"
+      r="50"/>
+    <filter
+      x="-8.5%"
+      y="-6.5%"
+      width="117.0%"
+      height="117.0%"
+      filterUnits="objectBoundingBox"
+      id="red-filter">
+      <feOffset
+        dx="0"
+        dy="2"
+        in="SourceAlpha"
+        result="shadowOffsetOuterRed"/>
+      <feGaussianBlur
+        stdDeviation="2.5"
+        in="shadowOffsetOuterRed"
+        result="shadowBlurOuterRed"/>
+      <feColorMatrix
+        values="0 0 0 0 0.717315051   0 0 0 0 0.386154036   0 0 0 0 0.386154036  0 0 0 0.5 0"
+        type="matrix"
+        in="shadowBlurOuterRed"/>
+    </filter>
+  </defs>
+  <g
+    id="redball"
+    stroke="none"
+    stroke-width="1"
+    fill="none"
+    fill-rule="evenodd">
+    <g id="redball">
+      <use
+        fill="black"
+        fill-opacity="1"
+        filter="url(#red-filter)"
+        xlink:href="#redball"/>
+      <use
+        fill="url(#red-gradient)"
+        fill-rule="evenodd"
+        xlink:href="#redball"/>
+    </g>
+  </g>
+</svg>
+</template>
+
+<script>
+export default {
+  name: 'RedBall',
+};
+</script>
