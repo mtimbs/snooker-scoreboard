@@ -4,9 +4,15 @@
       <div class="ball-container">
         <div class="left-side">
           <div>
-            <div @click="decrementRedBallCount" class="red-ball-container">
+            <div
+              @click="decrementRedBallCount"
+              class="red-ball-container">
               <red-ball class="red-ball"/>
-              <span class="red-ball-counter" :class="{'pad-left' : redBallCountPadLeft}">{{redBallCount}}</span>
+              <span
+                :class="{'pad-left' : redBallCountPadLeft}"
+                class="red-ball-counter">
+                {{redBallCount}}
+              </span>
             </div>
             <div class="action-buttons">
               <button>FOUL</button>
