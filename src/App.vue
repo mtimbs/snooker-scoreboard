@@ -3,7 +3,9 @@
     <main class="felt noselect"> 
       <div class="player-wrapper">
         <div class="player-container">
-          <div class="player-info">
+          <div
+            :class="{'player-turn' : playerOne.hasTurn}"
+            class="player-info">
             <div class="player-name">
               <h2>{{playerOne.name}}</h2>
             </div>
@@ -26,7 +28,9 @@
           </div>
         </div>
         <div class="player-container">
-          <div class="player-info">
+          <div
+            :class="{'player-turn' : playerTwo.hasTurn}"
+            class="player-info">
             <div class="player-name">
               <h2>{{playerTwo.name}}</h2>
             </div>
@@ -65,24 +69,36 @@
         </div>
         <div class="colour-triangle">
           <div class="top-row">
-            <black-ball class="pointer ball"/>
+            <div @click="potBall('black')">
+              <black-ball class="pointer ball"/>              
+            </div>
           </div>
           <div class="middle-row">
-            <pink-ball class="pointer ball"/>
-            <blue-ball class="pointer ball"/>
+            <div @click="potBall('pink')">
+              <pink-ball class="pointer ball"/>              
+            </div>
+            <div @click="potBall('blue')">
+              <blue-ball class="pointer ball"/>
+            </div>
           </div>
           <div class="bottom-row">
-            <yellow-ball class="pointer ball"/>
-            <green-ball class="pointer ball"/>
-            <brown-ball class="pointer ball"/>
+            <div @click="potBall('yellow')">
+              <yellow-ball class="pointer ball"/>
+            </div>
+            <div @click="potBall('green')">
+              <green-ball  class="pointer ball"/>
+            </div>
+            <div @click="potBall('brown')">
+              <brown-ball class="pointer ball"/>
+            </div>
           </div>
         </div>
       </div>
       <div class="action-buttons">
         <div class="buttons">
           <a class="pointer btn btn-foul">FOUL</a>
-          <a class="pointer btn btn-undo">UNDO</a>
-          <a class="pointer btn btn-switch">SWITCH PLAYER</a>
+          <a @click="undo" class="pointer btn btn-undo">UNDO</a>
+          <a @click="switchPlayer" class="pointer btn btn-switch">SWITCH PLAYER</a>
         </div>
       </div>
     </main>
@@ -130,6 +146,10 @@ h1, h2 {
   border-bottom: 1px solid #FFFFF0;
 }
 
+.player-name, .player-score {
+  padding: 0 10px 0 10px;
+}
+
 .player-history {
   padding: 5px 0;
   display: flex;
@@ -137,6 +157,10 @@ h1, h2 {
   justify-content: flex-start;
   align-items: center;
   flex-wrap: wrap;
+}
+
+.player-turn {
+  background: #ccc2a24d;
 }
 
 .ball {
@@ -226,6 +250,7 @@ h1, h2 {
 }
 
 .top-row, .middle-row, .bottom-row {
+  display: flex;
   flex-direction: row;
   justify-content: center;
   margin: 0 auto;
@@ -367,6 +392,23 @@ export default {
         points: this.getPointsByColour(colour),
       };
     },
+    undo() {
+      let last = {};
+      if (this.playerOne.hasTurn) {
+        last = this.playerOne.shotHistory.splice(-1)[0];
+      }
+      if (this.playerTwo.hasTurn) {
+        last = this.playerTwo.shotHistory.splice(-1)[0];
+      }
+
+      if (last.colour === 'red') {
+        this.redBall.quantity += 1;
+      }
+    },
+    switchPlayer() {
+      this.playerOne.hasTurn = !this.playerOne.hasTurn;
+      this.playerTwo.hasTurn = !this.playerTwo.hasTurn;
+    },
     getPointsByColour(colour) {
       const colourPoints = {
         red: 1,
@@ -381,7 +423,7 @@ export default {
     },
     decrementRedBallCount() {
       if (this.redBall.quantity > 0) {
-        this.redBall.quantity = this.redBall.quantity - 1;
+        this.redBall.quantity -= 1;
       }
     },
   },
