@@ -296,43 +296,36 @@ export default {
         quantity: 10,
         on: true,
         points: 1,
-        template: '<red-ball class="history-ball"/>',
       },
       yellowBall: {
         quantity: 1,
         on: false,
         points: 2,
-        template: '<yellow-ball class="history-ball"/>',
       },
       greenBall: {
         quantity: 1,
         on: false,
         points: 3,
-        template: '<green-ball class="history-ball"/>',
       },
       brownBall: {
         quantity: 1,
         on: false,
         points: 4,
-        template: '<brown-ball class="history-ball"/>',
       },
       blueBall: {
         quantity: 1,
         on: false,
         points: 5,
-        template: '<blue-ball class="history-ball"/>',
       },
       pinkBall: {
         quantity: 1,
         on: false,
         points: 6,
-        template: '<pink-ball class="history-ball"/>',
       },
       blackBall: {
         quantity: 1,
         on: false,
         points: 7,
-        template: '<black-ball class="history-ball"/>',
       },
     };
   },
