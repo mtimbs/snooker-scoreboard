@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <foul-modal :displayModal="true"/>
     <main class="felt noselect"> 
       <div class="player-wrapper">
         <div class="player-container">
@@ -96,7 +97,7 @@
       </div>
       <div class="action-buttons">
         <div class="buttons">
-          <a class="pointer btn btn-foul">FOUL</a>
+          <a @click="showFoulModal = true" class="pointer btn btn-foul">FOUL</a>
           <a @click="undo" class="pointer btn btn-undo">UNDO</a>
           <a @click="switchPlayer" class="pointer btn btn-switch">SWITCH PLAYER</a>
         </div>
@@ -113,6 +114,7 @@ import BrownBall from './components/svg/BrownBall';
 import BlueBall from './components/svg/BlueBall';
 import PinkBall from './components/svg/PinkBall';
 import BlackBall from './components/svg/BlackBall';
+import FoulModal from './components/modals/FoulModal';
 
 export default {
   name: 'app',
@@ -124,6 +126,7 @@ export default {
     BlueBall,
     PinkBall,
     BlackBall,
+    FoulModal,
   },
   data() {
     return {
@@ -239,6 +242,11 @@ export default {
         colour,
         points: this.getPointsByColour(colour),
       };
+    },
+    foul(points) {
+      if (this.playerOne.hasTurn) this.playerOne.shotHistory.push(this.newBall(`foul${points}`));
+      if (this.playerTwo.hasTurn) this.playeTwo.shotHistory.push(this.newBall(`foul${points}`));
+      this.switchPlayer();
     },
     undo() {
       let last = {};
