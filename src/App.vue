@@ -60,7 +60,7 @@
             <div
               @click="potBall('red')"
               class="red-ball-container">
-              <red-ball class="red-ball pointer ball"/>
+              <red-ball class="red-ball pointer ball" :class="{'on-ball' : redBallCount > 0}"/>
               <span class="red-ball-counter pointer">
                 {{redBallCount}}
               </span>
@@ -70,26 +70,26 @@
         <div class="colour-triangle">
           <div class="top-row">
             <div @click="potBall('black')">
-              <black-ball class="pointer ball"/>              
+              <black-ball class="pointer ball" :class="{'on-ball' : blackBall.on}"/>              
             </div>
           </div>
           <div class="middle-row">
             <div @click="potBall('pink')">
-              <pink-ball class="pointer ball"/>              
+              <pink-ball class="pointer ball" :class="{'on-ball' : pinkBall.on}"/>              
             </div>
             <div @click="potBall('blue')">
-              <blue-ball class="pointer ball"/>
+              <blue-ball class="pointer ball" :class="{'on-ball' : blueBall.on}"/>
             </div>
           </div>
           <div class="bottom-row">
             <div @click="potBall('yellow')">
-              <yellow-ball class="pointer ball"/>
+              <yellow-ball class="pointer ball" :class="{'on-ball' : yellowBall.on}"/>
             </div>
             <div @click="potBall('green')">
-              <green-ball  class="pointer ball"/>
+              <green-ball  class="pointer ball" :class="{'on-ball' : greenBall.on}"/>
             </div>
             <div @click="potBall('brown')">
-              <brown-ball class="pointer ball"/>
+              <brown-ball class="pointer ball" :class="{'on-ball' : brownBall.on}"/>
             </div>
           </div>
         </div>
@@ -104,6 +104,182 @@
     </main>
   </div>
 </template>
+
+<script>
+import RedBall from './components/svg/RedBall';
+import YellowBall from './components/svg/YellowBall';
+import GreenBall from './components/svg/GreenBall';
+import BrownBall from './components/svg/BrownBall';
+import BlueBall from './components/svg/BlueBall';
+import PinkBall from './components/svg/PinkBall';
+import BlackBall from './components/svg/BlackBall';
+
+export default {
+  name: 'app',
+  components: {
+    RedBall,
+    YellowBall,
+    GreenBall,
+    BrownBall,
+    BlueBall,
+    PinkBall,
+    BlackBall,
+  },
+  data() {
+    return {
+      playerOne: {
+        name: 'Michael',
+        hasTurn: true,
+        shotHistory: [],
+      },
+      playerTwo: {
+        name: 'Tom',
+        hasTurn: false,
+        shotHistory: [],
+      },
+      redBall: {
+        quantity: 10,
+        on: true,
+        points: 1,
+      },
+      yellowBall: {
+        quantity: 1,
+        on: false,
+        points: 2,
+      },
+      greenBall: {
+        quantity: 1,
+        on: false,
+        points: 3,
+      },
+      brownBall: {
+        quantity: 1,
+        on: false,
+        points: 4,
+      },
+      blueBall: {
+        quantity: 1,
+        on: false,
+        points: 5,
+      },
+      pinkBall: {
+        quantity: 1,
+        on: false,
+        points: 6,
+      },
+      blackBall: {
+        quantity: 1,
+        on: false,
+        points: 7,
+      },
+      colourRun: false,
+      lastPottedOnColourRun: null,
+    };
+  },
+  computed: {
+    redBallCount() {
+      return this.redBall.quantity;
+    },
+    redBallCountPadLeft() {
+      return this.redBallCount < 10;
+    },
+    playerOneScore() {
+      return this.playerOne.shotHistory.reduce((carry, shot) => carry + shot.points, 0);
+    },
+    playerTwoScore() {
+      return this.playerTwo.shotHistory.reduce((carry, shot) => carry + shot.points, 0);
+    },
+  },
+  methods: {
+    potBall(colour) {
+      if (colour === 'red' && this.redBallCount === 0) return;
+      if (colour === 'yellow' && this.yellowBall.on === false) return;
+      if (colour === 'green' && this.greenBall.on === false) return;
+      if (colour === 'brown' && this.brownBall.on === false) return;
+      if (colour === 'blue' && this.blueBall.on === false) return;
+      if (colour === 'pink' && this.pinkBall.on === false) return;
+      if (colour === 'black' && this.blackBall.on === false) return;
+
+      if (this.colourRun) this.handleColourRun(colour);
+      if (this.playerOne.hasTurn) this.playerOne.shotHistory.push(this.newBall(colour));
+      if (this.playerTwo.hasTurn) this.playerTwo.shotHistory.push(this.newBall(colour));
+
+      if (colour === 'red') this.handlePotRed();
+      if (colour !== 'red' && this.colourRun === false) this.toggleColours(false);
+      if (colour !== 'red' && this.redBallCount === 0 && this.colourRun === false) this.startColourRun();
+    },
+    handlePotRed() {
+      this.decrementRedBallCount();
+      this.toggleColours(true);
+    },
+    toggleColours(status) {
+      this.yellowBall.on = status;
+      this.greenBall.on = status;
+      this.brownBall.on = status;
+      this.blueBall.on = status;
+      this.pinkBall.on = status;
+      this.blackBall.on = status;
+    },
+    startColourRun() {
+      this.colourRun = true;
+      this.toggleColours(false);
+      this.yellowBall.on = true;
+    },
+    handleColourRun(colour) {
+      this.toggleColours(false);
+      if (colour === 'yellow') this.greenBall.on = true;
+      if (colour === 'green') this.brownBall.on = true;
+      if (colour === 'brown') this.blueBall.on = true;
+      if (colour === 'blue') this.pinkBall.on = true;
+      if (colour === 'pink') this.blackBall.on = true;
+      if (colour === 'black') this.completeMatch();
+    },
+    newBall(colour) {
+      return {
+        colour,
+        points: this.getPointsByColour(colour),
+      };
+    },
+    undo() {
+      let last = {};
+      if (this.playerOne.hasTurn) {
+        last = this.playerOne.shotHistory.splice(-1)[0];
+      }
+      if (this.playerTwo.hasTurn) {
+        last = this.playerTwo.shotHistory.splice(-1)[0];
+      }
+
+      if (last.colour === 'red') {
+        this.redBall.quantity += 1;
+      }
+    },
+    switchPlayer() {
+      this.playerOne.hasTurn = !this.playerOne.hasTurn;
+      this.playerTwo.hasTurn = !this.playerTwo.hasTurn;
+    },
+    getPointsByColour(colour) {
+      const colourPoints = {
+        red: 1,
+        yellow: 2,
+        green: 3,
+        brown: 4,
+        blue: 5,
+        pink: 6,
+        black: 7,
+      };
+      return colourPoints[colour];
+    },
+    decrementRedBallCount() {
+      if (this.redBall.quantity > 0) {
+        this.redBall.quantity -= 1;
+      }
+    },
+    completeMatch() {
+      console.log('game over');
+    },
+  },
+};
+</script>
 
 <style>
 html, body, main {
@@ -128,13 +304,11 @@ h1, h2 {
 
 .player-wrapper {
   padding: 10px 25px;
-  background: black;
   -webkit-box-shadow:inset 0px 0px 0px 10px #f00;
     -moz-box-shadow:inset 0px 0px 0px 10px #f00;
     box-shadow:inset 0px 0px 0px 1px ivory;
 }
 
-.player-container {}
 
 .player-info {
   width: 100%;
@@ -166,6 +340,13 @@ h1, h2 {
 .ball {
   max-height: 60px;
   max-width: 60px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.on-ball {
+  opacity: 1;
+  pointer-events: all;
 }
 
 .history-ball {
@@ -284,148 +465,3 @@ h1, h2 {
 }
 
 </style>
-
-<script>
-import RedBall from './components/svg/RedBall';
-import YellowBall from './components/svg/YellowBall';
-import GreenBall from './components/svg/GreenBall';
-import BrownBall from './components/svg/BrownBall';
-import BlueBall from './components/svg/BlueBall';
-import PinkBall from './components/svg/PinkBall';
-import BlackBall from './components/svg/BlackBall';
-
-export default {
-  name: 'app',
-  components: {
-    RedBall,
-    YellowBall,
-    GreenBall,
-    BrownBall,
-    BlueBall,
-    PinkBall,
-    BlackBall,
-  },
-  data() {
-    return {
-      playerOne: {
-        name: 'Michael',
-        hasTurn: true,
-        shotHistory: [],
-      },
-      playerTwo: {
-        name: 'Tom',
-        hasTurn: false,
-        shotHistory: [],
-      },
-      redBall: {
-        quantity: 10,
-        on: true,
-        points: 1,
-      },
-      yellowBall: {
-        quantity: 1,
-        on: false,
-        points: 2,
-      },
-      greenBall: {
-        quantity: 1,
-        on: false,
-        points: 3,
-      },
-      brownBall: {
-        quantity: 1,
-        on: false,
-        points: 4,
-      },
-      blueBall: {
-        quantity: 1,
-        on: false,
-        points: 5,
-      },
-      pinkBall: {
-        quantity: 1,
-        on: false,
-        points: 6,
-      },
-      blackBall: {
-        quantity: 1,
-        on: false,
-        points: 7,
-      },
-    };
-  },
-  computed: {
-    redBallCount() {
-      return this.redBall.quantity;
-    },
-    redBallCountPadLeft() {
-      return this.redBallCount < 10;
-    },
-    playerOneScore() {
-      return this.playerOne.shotHistory.reduce((carry, shot) => carry + shot.points, 0);
-    },
-    playerTwoScore() {
-      return this.playerTwo.shotHistory.reduce((carry, shot) => carry + shot.points, 0);
-    },
-  },
-  methods: {
-    potBall(colour) {
-      if (colour === 'red' && this.redBallCount === 0) {
-        return;
-      }
-
-      if (this.playerOne.hasTurn) {
-        this.playerOne.shotHistory.push(this.newBall(colour));
-      }
-
-      if (this.playerTwo.hasTurn) {
-        this.playerTwo.shotHistory.push(this.newBall(colour));
-      }
-
-      if (colour === 'red') {
-        this.decrementRedBallCount();
-      }
-    },
-    newBall(colour) {
-      return {
-        colour,
-        points: this.getPointsByColour(colour),
-      };
-    },
-    undo() {
-      let last = {};
-      if (this.playerOne.hasTurn) {
-        last = this.playerOne.shotHistory.splice(-1)[0];
-      }
-      if (this.playerTwo.hasTurn) {
-        last = this.playerTwo.shotHistory.splice(-1)[0];
-      }
-
-      if (last.colour === 'red') {
-        this.redBall.quantity += 1;
-      }
-    },
-    switchPlayer() {
-      this.playerOne.hasTurn = !this.playerOne.hasTurn;
-      this.playerTwo.hasTurn = !this.playerTwo.hasTurn;
-    },
-    getPointsByColour(colour) {
-      const colourPoints = {
-        red: 1,
-        yellow: 2,
-        green: 3,
-        brown: 4,
-        blue: 5,
-        pink: 6,
-        black: 7,
-      };
-      return colourPoints[colour];
-    },
-    decrementRedBallCount() {
-      if (this.redBall.quantity > 0) {
-        this.redBall.quantity -= 1;
-      }
-    },
-  },
-};
-</script>
