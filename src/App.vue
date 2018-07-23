@@ -242,16 +242,10 @@ export default {
     },
     undo() {
       let last = {};
-      if (this.playerOne.hasTurn) {
-        last = this.playerOne.shotHistory.splice(-1)[0];
-      }
-      if (this.playerTwo.hasTurn) {
-        last = this.playerTwo.shotHistory.splice(-1)[0];
-      }
-
-      if (last.colour === 'red') {
-        this.redBall.quantity += 1;
-      }
+      if (this.playerOne.hasTurn) last = this.playerOne.shotHistory.splice(-1)[0];
+      if (this.playerTwo.hasTurn) last = this.playerTwo.shotHistory.splice(-1)[0];
+      if (last.colour === 'red') this.redBall.quantity += 1;
+      if (this.redBallCount > 0) this.colourRun = false;
     },
     switchPlayer() {
       this.playerOne.hasTurn = !this.playerOne.hasTurn;
@@ -270,9 +264,7 @@ export default {
       return colourPoints[colour];
     },
     decrementRedBallCount() {
-      if (this.redBall.quantity > 0) {
-        this.redBall.quantity -= 1;
-      }
+      if (this.redBall.quantity > 0) this.redBall.quantity -= 1;
     },
     completeMatch() {
       console.log('game over');
