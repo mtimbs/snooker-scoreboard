@@ -8,7 +8,7 @@
             :class="{'player-turn' : playerOne.hasTurn}"
             class="player-info">
             <div class="player-name">
-              <h2>{{playerOne.name}}</h2>
+              <h2>{{playerOne.name}} ({{playerOne.frameCount}})</h2>
             </div>
             <div class="player-score">
               <h1>{{playerOneScore}}</h1>
@@ -33,7 +33,7 @@
             :class="{'player-turn' : playerTwo.hasTurn}"
             class="player-info">
             <div class="player-name">
-              <h2>{{playerTwo.name}}</h2>
+              <h2>{{playerTwo.name}} ({{playerTwo.frameCount}})</h2>
             </div>
             <div class="player-name">
               <h1>{{playerTwoScore}}</h1>
@@ -139,11 +139,13 @@ export default {
         name: 'Michael',
         hasTurn: true,
         shotHistory: [],
+        frameCount: 3,
       },
       playerTwo: {
         name: 'Tom',
         hasTurn: false,
         shotHistory: [],
+        frameCount: 2,
       },
       redBall: {
         quantity: 10,
@@ -296,6 +298,10 @@ export default {
       this.playerOne.hasTurn = !this.playerOne.hasTurn;
       this.playerTwo.hasTurn = !this.playerTwo.hasTurn;
       if (!this.colourRun) this.toggleColours(false);
+      if (this.redBallCount === 0 && !this.colourRun) {
+        this.colourRun = true;
+        this.yellowBall.on = true;
+      }
       if (this.breakScore > this.longestBreakScore) this.longestBreak = this.break;
       this.break = [];
     },
