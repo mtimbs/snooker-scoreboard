@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <foul-modal :displayModal="true"/>
+    <foul-modal :displayModal="showFoulModal" @dismiss="showFoulModal=false" @foul="foul" />
     <main class="felt noselect"> 
       <div class="player-wrapper">
         <div class="player-container">
@@ -54,6 +54,11 @@
             </span>
           </div>
         </div>
+      </div>
+      <div class="game-summary">
+        <p>{{scoreMarginString}}</p>
+        <p>{{remainingPoints}} remaining</p>
+        <p>Break: {{breakScore}} ({{longestBreakScore}})</p>
       </div>
       <div class="ball-container">
         <div class="left-side">
@@ -175,26 +180,54 @@ export default {
         on: false,
         points: 7,
       },
+      break: [],
+      longestBreak: [],
       colourRun: false,
-      lastPottedOnColourRun: null,
+      showFoulModal: false,
     };
   },
   computed: {
     redBallCount() {
       return this.redBall.quantity;
     },
-    redBallCountPadLeft() {
-      return this.redBallCount < 10;
-    },
     playerOneScore() {
       return this.playerOne.shotHistory.reduce((carry, shot) => carry + shot.points, 0);
+    },
+    breakScore() {
+      return this.break.reduce((carry, shot) => carry + shot.points, 0);
+    },
+    longestBreakScore() {
+      return this.longestBreak.reduce((carry, shot) => carry + shot.points, 0);
     },
     playerTwoScore() {
       return this.playerTwo.shotHistory.reduce((carry, shot) => carry + shot.points, 0);
     },
+    remainingPoints() {
+      if (this.yellowBall.on) return (!this.colourRun) ? (8 * this.redBallCount) + 27 + 7 : 27;
+      if (this.colourRun) return this.colourRunRemainingPoints;
+      return (8 * this.redBallCount) + 27;
+    },
+    colourRunRemainingPoints() {
+      if (this.yellowBall.on) return 27;
+      if (this.greenBall.on) return 25;
+      if (this.brownBall.on) return 22;
+      if (this.blueBall.on) return 18;
+      if (this.pinkBall.on) return 13;
+      if (this.blackBall.on) return 7;
+      return 0;
+    },
+    scoreMarginString() {
+      if (this.playerOneScore - this.playerTwoScore === 0) return 'Scores Level';
+
+      if (this.playerOne.hasTurn) {
+        return (this.playerOneScore - this.playerTwoScore > 0) ? `${this.playerOneScore - this.playerTwoScore} ahead` : `${this.playerTwoScore - this.playerOneScore} behind`;
+      }
+      return (this.playerTwoScore - this.playerOneScore > 0) ? `${this.playerTwoScore - this.playerOneScore} ahead` : `${this.playerOneScore - this.playerTwoScore} behind`;
+    },
   },
   methods: {
     potBall(colour) {
+      // Ignore click events from balls that aren't on
       if (colour === 'red' && this.redBallCount === 0) return;
       if (colour === 'yellow' && this.yellowBall.on === false) return;
       if (colour === 'green' && this.greenBall.on === false) return;
@@ -206,6 +239,8 @@ export default {
       if (this.colourRun) this.handleColourRun(colour);
       if (this.playerOne.hasTurn) this.playerOne.shotHistory.push(this.newBall(colour));
       if (this.playerTwo.hasTurn) this.playerTwo.shotHistory.push(this.newBall(colour));
+
+      this.break.push(this.newBall(colour));
 
       if (colour === 'red') this.handlePotRed();
       if (colour !== 'red' && this.colourRun === false) this.toggleColours(false);
@@ -244,20 +279,25 @@ export default {
       };
     },
     foul(points) {
-      if (this.playerOne.hasTurn) this.playerOne.shotHistory.push(this.newBall(`foul${points}`));
-      if (this.playerTwo.hasTurn) this.playeTwo.shotHistory.push(this.newBall(`foul${points}`));
+      if (this.playerOne.hasTurn) this.playerTwo.shotHistory.push({ colour: 'foul', points });
+      if (this.playerTwo.hasTurn) this.playerOne.shotHistory.push({ colour: 'foul', points });
+      this.showFoulModal = false;
       this.switchPlayer();
     },
     undo() {
       let last = {};
       if (this.playerOne.hasTurn) last = this.playerOne.shotHistory.splice(-1)[0];
       if (this.playerTwo.hasTurn) last = this.playerTwo.shotHistory.splice(-1)[0];
+      if (!last) return;
       if (last.colour === 'red') this.redBall.quantity += 1;
       if (this.redBallCount > 0) this.colourRun = false;
     },
     switchPlayer() {
       this.playerOne.hasTurn = !this.playerOne.hasTurn;
       this.playerTwo.hasTurn = !this.playerTwo.hasTurn;
+      if (!this.colourRun) this.toggleColours(false);
+      if (this.breakScore > this.longestBreakScore) this.longestBreak = this.break;
+      this.break = [];
     },
     getPointsByColour(colour) {
       const colourPoints = {
@@ -268,6 +308,10 @@ export default {
         blue: 5,
         pink: 6,
         black: 7,
+        foul4: 4,
+        foul5: 5,
+        foul6: 6,
+        foul7: 7,
       };
       return colourPoints[colour];
     },
@@ -275,7 +319,7 @@ export default {
       if (this.redBall.quantity > 0) this.redBall.quantity -= 1;
     },
     completeMatch() {
-      console.log('game over');
+      this.toggleColours(false);
     },
   },
 };
@@ -462,6 +506,16 @@ h1, h2 {
   height: 18px;
   margin: 0 1px 4px 1px;
   display: inline-block;
+}
+
+.game-summary {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 0 10%;
 }
 
 </style>
